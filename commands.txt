@@ -1,0 +1,8 @@
+yaourt -S python-virtualenv
+source env/bin/activate
+pip install scrapy
+pip install service_identity
+scrapy startproject groupon_parser
+cd groupon_parser
+scrapy genspider grouopn grouopn.es
+scrapy crawl groupon
