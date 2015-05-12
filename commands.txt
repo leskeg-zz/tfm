@@ -5,4 +5,5 @@ pip install service_identity
 scrapy startproject groupon_parser
 cd groupon_parser
 scrapy genspider grouopn grouopn.es
+pip install selenium ipdb 
 scrapy crawl groupon
