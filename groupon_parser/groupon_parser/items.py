@@ -11,4 +11,13 @@ import scrapy
 class GrouponParserItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
+    timestamp = Field()
+	url = scrapy.Field()
+	title = scrapy.Field()
+	price = scrapy.Field()
+	discount = scrapy.Field()
+	text = scrapy.Field()
+	options = scrapy.Field()
+	place = scrapy.Field()
+	stars = scrapy.Field()
     pass
