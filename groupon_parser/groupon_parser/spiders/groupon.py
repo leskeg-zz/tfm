@@ -18,4 +18,6 @@ class GrouponSpider(scrapy.Spider):
     	self.driver.find_element_by_xpath('//*[@id="search_getaways_widget"]/ul/li[1]/div[2]/a').click()
     	self.driver.find_element_by_xpath('//*[@id="show_more_deals"]').click()
     	import ipdb; ipdb.set_trace()
+    	self.driver.find_element_by_id('deal_tiles').find_elements_by_tag_name('a')[1].get_attribute('href')
+    	self.driver.find_element_by_xpath('//*[@id="deal_tiles"]').find_elements_by_tag_name('a')[1].get_attribute('href')
         pass
