@@ -16,7 +16,7 @@ class GrouponParserItem(scrapy.Item):
 	title = scrapy.Field()
 	price = scrapy.Field()
 	discount = scrapy.Field()
-	text = scrapy.Field()
+	description = scrapy.Field()
 	options = scrapy.Field()
 	place = scrapy.Field()
 	stars = scrapy.Field()

@@ -7,3 +7,5 @@ cd groupon_parser
 scrapy genspider grouopn grouopn.es
 pip install selenium ipdb 
 scrapy crawl groupon
+pip install datetime
+pip install python-dateutil
