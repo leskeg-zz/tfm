@@ -9,3 +9,6 @@ pip install selenium ipdb
 scrapy crawl groupon
 pip install datetime
 pip install python-dateutil
+yaourt -S mongodb mongodb-tools robomongo
+scrapy crawl grouponScrapy -o result.json -t json
+mongoimport --db tfm --collection result --type json --file result.json --jsonArray
