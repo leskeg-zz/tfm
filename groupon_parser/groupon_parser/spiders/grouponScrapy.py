@@ -4,12 +4,14 @@ from selenium import webdriver
 from groupon_parser.items import GrouponParserItem
 from datetime import datetime
 from dateutil import tz
+import ipdb
 
 class GrouponSpider(scrapy.Spider):
 	name = "grouponScrapy"
 	allowed_domains = ["groupon.es"]
 	start_urls = (
-		'http://www.groupon.es/getaways',
+		# 'http://www.groupon.es/getaways',
+		'http://www.groupon.es/travel/almeria/hotels',
 	)
 
 	def __init__(self):
@@ -18,8 +20,11 @@ class GrouponSpider(scrapy.Spider):
 	def parse(self, response):
 		browser = self.driver
 		browser.get(response.url)
-		browser.find_element_by_id("already-registered-link").click()
-		browser.find_element_by_xpath('//*[@id="search_getaways_widget"]/ul/li[1]/div[2]/a').click()
+		try:
+			browser.find_element_by_id("already-registered-link").click()
+			browser.find_element_by_xpath('//*[@id="search_getaways_widget"]/ul/li[1]/div[2]/a').click()
+		except:
+			pass
 
 		while True:
 			try:
@@ -27,10 +32,27 @@ class GrouponSpider(scrapy.Spider):
 			except:
 				break
 
-		for element in browser.find_element_by_id('flash_deals').find_elements_by_tag_name('a')[2:]:
-			url = element.get_attribute('href')
-			if '/deals/' in url and '/ga-' in url:
-				yield scrapy.http.Request(url = url, meta = {}, callback=self.parse_ad)
+		# url_list = browser.find_element_by_id('flash_deals').find_elements_by_tag_name('a')[2:]
+		ad_list = browser.find_elements_by_class_name("deal-card")
+		# url_list = [url.find_element_by_tag_name('a').get_attribute('href') for url in ad_list]
+		# try:
+		# 	banner = browser.find_element_by_xpath('//*[@id="gallery_banner"]/a')
+		# 	ad_list.remove( banner )
+		# except:
+		# 	pass
+
+		for index,element in enumerate(ad_list):
+			url = element.find_element_by_tag_name('a').get_attribute('href')
+			# ipdb.set_trace()
+			try:
+				location = browser.find_element_by_xpath('//*[@id="flash_deals"]/div/div[2]/div[1]/figure['+ str(index+1) +']/figcaption/p').text
+			except:
+				try:
+					location = element.find_element_by_class_name('deal-location').text
+				except:
+					location = ''
+
+			yield scrapy.http.Request(url = url, meta = {'location': location}, callback=self.parse_ad)
 
 		browser.close()
 		
@@ -40,6 +62,8 @@ class GrouponSpider(scrapy.Spider):
 		item = GrouponParserItem()
 		item['url'] = response.url
 		item['timestamp'] = datetime.now(tz.tzlocal()).strftime("%y-%m-%d %H:%M:%S:%f%z")
+		item['location'] = response.meta['location']
+		ipdb.set_trace()
 
 		try:
 			item['title'] = ''.join(response.xpath('//*[@id="global-container"]/div[4]/section[2]/div/div/section/div/hgroup/h1/text()').extract()).strip().replace('\n','')

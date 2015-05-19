@@ -20,4 +20,5 @@ class GrouponParserItem(scrapy.Item):
 	options = scrapy.Field()
 	place = scrapy.Field()
 	address = scrapy.Field()
+	location = scrapy.Field()
 	stars = scrapy.Field()

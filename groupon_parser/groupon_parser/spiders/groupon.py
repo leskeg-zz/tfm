@@ -33,23 +33,23 @@ class GrouponSpider(scrapy.Spider):
 		ads_counter = 1
 
 		url = ads[2].get_attribute('href')
-		place = ads[2].parent.find_element_by_class_name('deal-location').text
-		ads_list.append({'url': url, 'place': place})
+		location = ads[2].parent.find_element_by_class_name('deal-location').text
+		ads_list.append({'url': url, 'location': location})
 		
-		print str(ads_counter) + '/' + str(total_ads) + '\t' + place + '\t' + url
+		print str(ads_counter) + '/' + str(total_ads) + '\t' + location + '\t' + url
 
 		for element in ads[3:]:
 			url = element.get_attribute('href')
 
 			try:
-				place = element.find_element_by_class_name('deal-location').text
+				location = element.find_element_by_class_name('deal-location').text
 			except:
-				place = ''
+				location = ''
 
 			if '/deals/' in url and '/ga-' in url:
-				ads_list.append({'url': url, 'place': place})
+				ads_list.append({'url': url, 'location': location})
 				ads_counter+=1
-				print str(ads_counter) + '/' + str(total_ads) + '\t' + place + '\t' + url
+				print str(ads_counter) + '/' + str(total_ads) + '\t' + location + '\t' + url
 
 		for ad in ads_list:
 			browser.set_page_load_timeout(5)
@@ -61,6 +61,7 @@ class GrouponSpider(scrapy.Spider):
 			item = GrouponParserItem()
 			item['url'] = ad['url']
 			item['timestamp'] = datetime.now(tz.tzlocal()).strftime("%y-%m-%d %H:%M:%S:%f%z")
+			item['location'] = location
 
 			try:
 				item['title'] = browser.find_element_by_xpath('//*[@id="global-container"]/div[4]/section[2]/div/div/section/div/hgroup/h1').text
@@ -91,6 +92,11 @@ class GrouponSpider(scrapy.Spider):
 				item['address'] = browser.find_element_by_xpath('//*[@id="redemption-locations"]/li/div[2]/p[2]').text
 			except:
 				item['address'] = ''
+
+			try:
+				item['place'] = browser.find_element_by_xpath('//*[@id="redemption-locations"]/li/div[2]/p[1]/strong').text
+			except:
+				item['place'] = ''
 
 			try:
 				item['stars'] = int( item['description'][ item['description'].index('*')-1 ] )
