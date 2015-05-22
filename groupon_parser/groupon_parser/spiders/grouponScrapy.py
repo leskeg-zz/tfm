@@ -10,8 +10,7 @@ class GrouponSpider(scrapy.Spider):
 	name = "grouponScrapy"
 	allowed_domains = ["groupon.es"]
 	start_urls = (
-		# 'http://www.groupon.es/getaways',
-		'http://www.groupon.es/travel/almeria/hotels',
+		'http://www.groupon.es/getaways',
 	)
 
 	def __init__(self):
@@ -32,77 +31,52 @@ class GrouponSpider(scrapy.Spider):
 			except:
 				break
 
-		# url_list = browser.find_element_by_id('flash_deals').find_elements_by_tag_name('a')[2:]
-		ad_list = browser.find_elements_by_class_name("deal-card")
-		# url_list = [url.find_element_by_tag_name('a').get_attribute('href') for url in ad_list]
-		# try:
-		# 	banner = browser.find_element_by_xpath('//*[@id="gallery_banner"]/a')
-		# 	ad_list.remove( banner )
-		# except:
-		# 	pass
+		ad_list = browser.find_elements_by_tag_name("figure")
 
-		for index,element in enumerate(ad_list):
-			url = element.find_element_by_tag_name('a').get_attribute('href')
-			# ipdb.set_trace()
+		for ad in ad_list:
+			url = ad.find_element_by_tag_name('a').get_attribute('href')
+
 			try:
-				location = browser.find_element_by_xpath('//*[@id="flash_deals"]/div/div[2]/div[1]/figure['+ str(index+1) +']/figcaption/p').text
+				location = ad.find_element_by_class_name('deal-location').text
 			except:
-				try:
-					location = element.find_element_by_class_name('deal-location').text
-				except:
-					location = ''
+				location = ''
 
 			yield scrapy.http.Request(url = url, meta = {'location': location}, callback=self.parse_ad)
 
 		browser.close()
-		
-
 
 	def parse_ad(self, response):
 		item = GrouponParserItem()
 		item['url'] = response.url
 		item['timestamp'] = datetime.now(tz.tzlocal()).strftime("%y-%m-%d %H:%M:%S:%f%z")
 		item['location'] = response.meta['location']
-		ipdb.set_trace()
 
-		try:
-			item['title'] = ''.join(response.xpath('//*[@id="global-container"]/div[4]/section[2]/div/div/section/div/hgroup/h1/text()').extract()).strip().replace('\n','')
-		except:
-			item['title'] = ''
+		item_dict = {
+			'title': 		'//*[@id="global-container"]/div[4]/section[2]/div/div/section/div/hgroup/h1/text()',
+			'price': 		'//*[@id="deal-hero-price"]/span[2]/text()',
+			'discount': 	'//*[@id="purchase-cluster"]/div[3]/table/tbody/tr[2]/td[2]/text()',
+			'description':	'//*[@id="tabs-1"]/div/article[1]/div//text()',
+			'address': 		'//*[@id="redemption-locations"]/li/div[2]/p[2]/text()',
+			'place': 		'//*[@id="redemption-locations"]/li/div[2]/p[1]/strong/text()',
+			'options':		'//*[@id="tabs-1"]/div/article[2]/div[2]//text()'
+		}
 
-		try:
-			item['price'] = ''.join(response.xpath('//*[@id="deal-hero-price"]/span[2]/text()').extract()).strip().replace('\n','')
-		except:
-			item['price'] = ''
+		for key,value in item_dict.iteritems():
+			try:
+				item[key] = ''.join(response.xpath(value).extract()).strip().replace('\n','')
+			except:
+				item[key] = ''
 
-		try:
-			item['discount'] = ''.join(response.xpath('//*[@id="purchase-cluster"]/div[3]/table/tbody/tr[2]/td[2]/text()').extract()).strip().replace('\n','')
-		except:
-			item['discount'] = ''
+		found = None
+		if '*' in item['title']:
+			found = 'title'
+		elif '*' in item['description']:
+			found = 'description'
 
-		try:
-			item['description'] = ''.join(response.xpath('//*[@id="tabs-1"]/div/article[1]/div//text()').extract()).strip().replace('\n','')
-		except:
-			item['description'] = ''
-
-		try:
-			item['options'] = ''.join(response.xpath('//*[@id="tabs-1"]/div/article[2]/div[2]//text()').extract()).strip().replace('\n','')
-		except:
-			item['options'] = ''
-
-		try:
-			item['address'] = ''.join(response.xpath('//*[@id="redemption-locations"]/li/div[2]/p[2]/text()').extract()).strip().replace('\n','')
-		except:
-			item['address'] = ''
-
-		try:
-			item['place'] = ''.join(response.xpath('//*[@id="redemption-locations"]/li/div[2]/p[1]/strong/text()').extract()).strip().replace('\n','')
-		except:
-			item['place'] = ''
-
-		try:
-			item['stars'] = int( item['description'][ item['description'].index('*')-1 ] )
-		except:
-			item['stars'] = ''
+		if found:
+			try:
+				item['stars'] = int( item[ found ][ item[ found ].index('*')-1 ] )
+			except:
+				item['stars'] = ''
 
 		yield item
