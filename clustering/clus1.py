@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 from pymongo import MongoClient
+import codecs
 import ipdb
 import nltk
 import tokenizers
 import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-import codecs
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.cluster import KMeans
+from sklearn.externals import joblib
 
 # Making a Connection with MongoClient
 client = MongoClient()
@@ -16,8 +20,8 @@ db = client.tfm
 collection = db.result
 
 # Getting interesting data
-titles = collection.find().distinct("title")
-descriptions = collection.find().distinct("description")
+titles = list( collection.find( {}, { 'title':1, '_id':0 } ))
+descriptions = collection.distinct("description")
 
 # Load nltk's Spanish stopwords
 stopwords1 = nltk.corpus.stopwords.words('spanish')
@@ -45,5 +49,49 @@ tfidf_vectorizer = TfidfVectorizer(max_df=0.8, max_features=200000,
                                  use_idf=True, tokenizer=tokenizers.tokenize_and_stem, ngram_range=(1,3))
 
 tfidf_matrix = tfidf_vectorizer.fit_transform(descriptions) #fit the vectorizer to descriptions
-ipdb.set_trace()
 # print(tfidf_matrix.shape)
+
+terms = tfidf_vectorizer.get_feature_names()
+dist = 1 - cosine_similarity(tfidf_matrix)
+
+num_clusters = 5
+km = KMeans(n_clusters=num_clusters)
+km.fit(tfidf_matrix)
+clusters = km.labels_.tolist()
+
+#uncomment the below to save your model 
+#since I've already run my model I am loading from the pickle
+
+#joblib.dump(km,  'doc_cluster.pkl')
+
+# km = joblib.load('doc_cluster.pkl')
+# clusters = km.labels_.tolist()
+
+ads = { 'title': titles, 'description': descriptions, 'cluster': clusters }
+frame = pd.DataFrame(ads, index = [clusters] , columns = [ 'title', 'description', 'cluster'])
+frame['cluster'].value_counts() #number of films per cluster (clusters from 0 to 4)
+# grouped = frame['rank'].groupby(frame['cluster']) #groupby cluster for aggregation purposes
+# grouped.mean() #average rank (1 to 100) per cluster
+
+
+print("Top terms per cluster:")
+print()
+#sort cluster centers by proximity to centroid
+order_centroids = km.cluster_centers_.argsort()[:, ::-1] 
+
+for i in range(num_clusters):
+    print("Cluster %d words:" % i, end='')
+    
+    for ind in order_centroids[i, :6]: #replace 6 with n words per cluster
+        print(' %s' % vocab_frame.ix[terms[ind].split(' ')].values.tolist()[0][0].encode('utf-8', 'ignore'), end=',')
+    print() #add whitespace
+    print() #add whitespace
+    
+    print("Cluster %d titles:" % i, end='')
+    for title in frame.ix[i]['title'].values.tolist():
+        print(' %s,' % title['title'], end='')
+    print() #add whitespace
+    print() #add whitespace
+    
+print()
+print()
