@@ -32,21 +32,20 @@ stopwords = list(set(stopwords1) | set(stopwords2))
 
 #not super pythonic, no, not at all.
 #use extend so it's a big flat list of vocab
-totalvocab_stemmed = []
-totalvocab_tokenized = []
-for i in descriptions:
-	allwords_stemmed = tokenizers.tokenize_and_stem(i) #for each item in 'descriptions', tokenize/stem
-	totalvocab_stemmed.extend(allwords_stemmed) #extend the 'totalvocab_stemmed' list
+# totalvocab_stemmed = []
+# totalvocab_tokenized = []
+# for i in descriptions:
+# 	allwords_stemmed = tokenizers.tokenize_and_stem(i) #for each item in 'descriptions', tokenize/stem
+# 	totalvocab_stemmed.extend(allwords_stemmed) #extend the 'totalvocab_stemmed' list
 
-	allwords_tokenized = tokenizers.tokenize_only(i)
-	totalvocab_tokenized.extend(allwords_tokenized)
+# 	allwords_tokenized = tokenizers.tokenize_only(i)
+# 	totalvocab_tokenized.extend(allwords_tokenized)
 
-vocab_frame = pd.DataFrame({'words': totalvocab_tokenized}, index = totalvocab_stemmed)
+# vocab_frame = pd.DataFrame({'words': totalvocab_tokenized}, index = totalvocab_stemmed)
 
 #define vectorizer parameters
-tfidf_vectorizer = TfidfVectorizer(max_df=0.8, max_features=200000,
-                                 min_df=0.2, stop_words=stopwords,
-                                 use_idf=True, tokenizer=tokenizers.tokenize_and_stem, ngram_range=(1,3))
+tfidf_vectorizer = TfidfVectorizer(stop_words=stopwords, use_idf=True, \
+	tokenizer=tokenizers.tokenize_only, analyzer='word', min_df=0.1)
 
 tfidf_matrix = tfidf_vectorizer.fit_transform(descriptions) #fit the vectorizer to descriptions
 # print(tfidf_matrix.shape)
@@ -80,18 +79,21 @@ print()
 order_centroids = km.cluster_centers_.argsort()[:, ::-1] 
 
 for i in range(num_clusters):
-    print("Cluster %d words:" % i, end='')
+    print("Cluster %d words:" % i, end='\n\r')
     
-    for ind in order_centroids[i, :6]: #replace 6 with n words per cluster
-        print(' %s' % vocab_frame.ix[terms[ind].split(' ')].values.tolist()[0][0].encode('utf-8', 'ignore'), end=',')
+    for ind in order_centroids[i, :5]: #replace 5 with n words per cluster
+        # print(' %s' % vocab_frame.ix[terms[ind].split(' ')].values.tolist()[0][0].encode('utf-8', 'ignore'), end=',')
+        print(' %s' % terms[ind], end='')
     print() #add whitespace
     print() #add whitespace
     
-    print("Cluster %d titles:" % i, end='')
+    print("Cluster %d titles:" % i, end='\n\r')
     for title in frame.ix[i]['title'].values.tolist():
-        print(' %s,' % title['title'], end='')
+        print(' %s.' % title['title'], end='\n\r')
     print() #add whitespace
     print() #add whitespace
     
 print()
 print()
+
+ipdb.set_trace()
