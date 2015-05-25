@@ -20,8 +20,18 @@ db = client.tfm
 collection = db.result
 
 # Getting interesting data
-titles = list( collection.find( {}, { 'title':1, '_id':0 } ))
-descriptions = collection.distinct("description")
+titles = []
+descriptions = []
+prices = []
+stars = []
+for element in collection.find():
+	titles.append(element['title'])
+	descriptions.append(element['description'])
+	prices.append(element['price'])
+	stars.append(element['stars'])
+
+# stars = list( collection.find( {}, { 'stars':1, '_id':0 } ))
+
 
 # Load nltk's Spanish stopwords
 stopwords1 = nltk.corpus.stopwords.words('spanish')
@@ -66,8 +76,8 @@ clusters = km.labels_.tolist()
 # km = joblib.load('doc_cluster.pkl')
 # clusters = km.labels_.tolist()
 
-ads = { 'title': titles, 'description': descriptions, 'cluster': clusters }
-frame = pd.DataFrame(ads, index = [clusters] , columns = [ 'title', 'description', 'cluster'])
+ads = { 'title': titles, 'description': descriptions, 'price': prices, 'stars': stars, 'cluster': clusters }
+frame = pd.DataFrame(ads, index = [clusters] , columns = [ 'title', 'description', 'price', 'stars', 'cluster'])
 frame['cluster'].value_counts() #number of films per cluster (clusters from 0 to 4)
 # grouped = frame['rank'].groupby(frame['cluster']) #groupby cluster for aggregation purposes
 # grouped.mean() #average rank (1 to 100) per cluster
@@ -89,7 +99,7 @@ for i in range(num_clusters):
     
     print("Cluster %d titles:" % i, end='\n\r')
     for title in frame.ix[i]['title'].values.tolist():
-        print(' %s.' % title['title'], end='\n\r')
+        print(' %s.' % title, end='\n\r')
     print() #add whitespace
     print() #add whitespace
     

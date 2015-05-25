@@ -78,5 +78,7 @@ class GrouponSpider(scrapy.Spider):
 				item['stars'] = int( item[ found ][ item[ found ].index('*')-1 ] )
 			except:
 				item['stars'] = ''
+		else:
+			item['stars'] = ''
 
 		yield item
