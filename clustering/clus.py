@@ -23,11 +23,13 @@ collection = db.result
 titles = []
 descriptions = []
 prices = []
+discounts = []
 stars = []
 for element in collection.find():
 	titles.append(element['title'])
 	descriptions.append(element['description'])
 	prices.append(element['price'])
+	discounts.append(element['discount'])
 	stars.append(element['stars'])
 
 # stars = list( collection.find( {}, { 'stars':1, '_id':0 } ))
@@ -76,12 +78,31 @@ clusters = km.labels_.tolist()
 # km = joblib.load('doc_cluster.pkl')
 # clusters = km.labels_.tolist()
 
-ads = { 'title': titles, 'description': descriptions, 'price': prices, 'stars': stars, 'cluster': clusters }
-frame = pd.DataFrame(ads, index = [clusters] , columns = [ 'title', 'description', 'price', 'stars', 'cluster'])
+ads = { 'title': titles, 'description': descriptions, 'price': prices, 'discount': discounts, 'stars': stars, 'cluster': clusters }
+frame = pd.DataFrame(ads, index = [clusters] , columns = [ 'title', 'description', 'price', 'discount', 'stars', 'cluster'])
 frame['cluster'].value_counts() #number of films per cluster (clusters from 0 to 4)
-# grouped = frame['rank'].groupby(frame['cluster']) #groupby cluster for aggregation purposes
-# grouped.mean() #average rank (1 to 100) per cluster
 
+
+'''
+price_grouped = frame['price'].groupby(frame['cluster']) #groupby cluster for aggregation purposes
+discount_grouped = frame['discount'].groupby(frame['cluster']) #groupby cluster for aggregation purposes
+stars_grouped = frame['price'].groupby(frame['stars'])
+print(price_grouped.mean()) #average rank (1 to 100) per cluster
+print(discount_grouped.mean()) #average rank (1 to 100) per cluster
+print(stars_grouped.mean()) #average rank (1 to 100) per cluster
+
+stars_grouped2 = frame['description'].groupby(frame['stars'])
+stars_grouped2.get_group(4)
+ipdb.set_trace()
+
+
+# totalvocab_tokenized = []
+# for description in frame.ix[0]['description'].values.tolist():
+# 	allwords_tokenized = tokenizers.tokenize_only(description)
+# 	totalvocab_tokenized.extend(allwords_tokenized)
+
+# tokenizers.wordFrequency(totalvocab_tokenized,stopwords)
+'''
 
 print("Top terms per cluster:")
 print()

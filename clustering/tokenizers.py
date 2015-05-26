@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import nltk
 import re
-
+import ipdb
 # Load nltk's SnowballStemmer
 stemmer = nltk.stem.snowball.SnowballStemmer("spanish")
 
@@ -26,3 +26,13 @@ def tokenize_only(text):
         if re.match('[a-zA-Z]', token):
             filtered_tokens.append(token)
     return filtered_tokens
+
+def wordFrequency(tokens, stopwords):
+    dictFreq = {}
+    for token in tokens:
+        if not token in stopwords:
+            dictFreq[token] = tokens.count(token)
+
+    ans = sorted(dictFreq, key=dictFreq.__getitem__, reverse=True)
+    ipdb.set_trace()
+    return

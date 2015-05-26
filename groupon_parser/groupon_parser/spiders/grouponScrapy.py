@@ -5,6 +5,7 @@ from groupon_parser.items import GrouponParserItem
 from datetime import datetime
 from dateutil import tz
 import ipdb
+import re
 
 class GrouponSpider(scrapy.Spider):
 	name = "grouponScrapy"
@@ -65,7 +66,7 @@ class GrouponSpider(scrapy.Spider):
 			try:
 				item[key] = ''.join(response.xpath(value).extract()).strip().replace('\n',' ')
 			except:
-				item[key] = ''
+				item[key] = None
 
 		found = None
 		if '*' in item['title']:
@@ -77,8 +78,18 @@ class GrouponSpider(scrapy.Spider):
 			try:
 				item['stars'] = int( item[ found ][ item[ found ].index('*')-1 ] )
 			except:
-				item['stars'] = ''
+				item['stars'] = None
 		else:
-			item['stars'] = ''
+			item['stars'] = None
+
+		try:
+			item['price'] = int(item['price'].split()[0])
+		except:
+			item['price'] = None
+
+		try:
+			item['discount'] = int(re.findall('\d+',item['discount'])[0])
+		except:
+			item['discount'] = None
 
 		yield item
