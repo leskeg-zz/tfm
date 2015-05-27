@@ -12,6 +12,58 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.cluster import KMeans
 from sklearn.externals import joblib
 
+import mpld3
+import os  # for os.path.basename
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+import graph
+
+from sklearn.manifold import MDS
+
+class TopToolbar(mpld3.plugins.PluginBase):
+    """Plugin for moving toolbar to top of figure"""
+
+    JAVASCRIPT = """
+    mpld3.register_plugin("toptoolbar", TopToolbar);
+    TopToolbar.prototype = Object.create(mpld3.Plugin.prototype);
+    TopToolbar.prototype.constructor = TopToolbar;
+    function TopToolbar(fig, props){
+        mpld3.Plugin.call(this, fig, props);
+    };
+
+    TopToolbar.prototype.draw = function(){
+      // the toolbar svg doesn't exist
+      // yet, so first draw it
+      this.fig.toolbar.draw();
+
+      // then change the y position to be
+      // at the top of the figure
+      this.fig.toolbar.toolbar.attr("x", 150);
+      this.fig.toolbar.toolbar.attr("y", 400);
+
+      // then remove the draw function,
+      // so that it is not called again
+      this.fig.toolbar.draw = function() {}
+    }
+    """
+    def __init__(self):
+        self.dict_ = {"type": "toptoolbar"}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Making a Connection with MongoClient
 client = MongoClient()
 # Getting a Database
@@ -90,19 +142,11 @@ stars_grouped = frame['price'].groupby(frame['stars'])
 print(price_grouped.mean()) #average rank (1 to 100) per cluster
 print(discount_grouped.mean()) #average rank (1 to 100) per cluster
 print(stars_grouped.mean()) #average rank (1 to 100) per cluster
-
-stars_grouped2 = frame['description'].groupby(frame['stars'])
-stars_grouped2.get_group(4)
-ipdb.set_trace()
-
-
-# totalvocab_tokenized = []
-# for description in frame.ix[0]['description'].values.tolist():
-# 	allwords_tokenized = tokenizers.tokenize_only(description)
-# 	totalvocab_tokenized.extend(allwords_tokenized)
-
-# tokenizers.wordFrequency(totalvocab_tokenized,stopwords)
 '''
+stars_grouped2 = frame['description'].groupby(frame['stars'])
+# ipdb.set_trace()
+# stars_grouped2.get_group(4).values
+
 
 print("Top terms per cluster:")
 print()
@@ -126,5 +170,93 @@ for i in range(num_clusters):
     
 print()
 print()
+
+
+# convert two components as we're plotting points in a two-dimensional plane
+# "precomputed" because we provide a distance matrix
+# we will also specify `random_state` so the plot is reproducible.
+mds = MDS(n_components=2, dissimilarity="precomputed", random_state=1)
+
+pos = mds.fit_transform(dist)  # shape (n_components, n_samples)
+
+xs, ys = pos[:, 0], pos[:, 1]
+print()
+print()
+
+#set up colors per clusters using a dict
+cluster_colors = {0: '#1b9e77', 1: '#d95f02', 2: '#7570b3', 3: '#e7298a', 4: '#66a61e'}
+
+#set up cluster names using a dict
+cluster_names = {0: 'Family, home, war', 
+                 1: 'Police, killed, murders', 
+                 2: 'Father, New York, brothers', 
+                 3: 'Dance, singing, love', 
+                 4: 'Killed, soldiers, captain'}
+
+
+
+#create data frame that has the result of the MDS plus the cluster numbers and titles
+df = pd.DataFrame(dict(x=xs, y=ys, label=clusters, title=titles)) 
+
+#group by cluster
+groups = df.groupby('label')
+
+#define custom css to format the font and to remove the axis labeling
+css = """
+text.mpld3-text, div.mpld3-tooltip {
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+g.mpld3-xaxis, g.mpld3-yaxis {
+display: none; }
+
+svg.mpld3-figure {
+margin-left: -100px;}
+"""
+
+# Plot 
+fig, ax = plt.subplots(figsize=(18,10)) #set plot size
+ax.margins(0.2) # Optional, just adds 5% padding to the autoscaling
+
+#iterate through groups to layer the plot
+#note that I use the cluster_name and cluster_color dicts with the 'name' lookup to return the appropriate color/label
+for name, group in groups:
+    points = ax.plot(group.x, group.y, marker='o', linestyle='', ms=18, 
+                     label=cluster_names[name], mec='none', 
+                     color=cluster_colors[name])
+    ax.set_aspect('auto')
+    labels = [i for i in group.title]
+    
+    #set tooltip using points, labels and the already defined 'css'
+    tooltip = mpld3.plugins.PointHTMLTooltip(points[0], labels,
+                                       voffset=10, hoffset=10, css=css)
+    #connect tooltip to fig
+    mpld3.plugins.connect(fig, tooltip, TopToolbar())    
+    
+    #set tick marks as blank
+    ax.axes.get_xaxis().set_ticks([])
+    ax.axes.get_yaxis().set_ticks([])
+    
+    #set axis as blank
+    ax.axes.get_xaxis().set_visible(False)
+    ax.axes.get_yaxis().set_visible(False)
+
+    
+ax.legend(numpoints=1) #show legend with only one dot
+
+mpld3.show() #show the plot
+
+#uncomment the below to export to html
+#html = mpld3.fig_to_html(fig)
+#print(html)
+
+
+
+
+
+
+
+
+
 
 ipdb.set_trace()
