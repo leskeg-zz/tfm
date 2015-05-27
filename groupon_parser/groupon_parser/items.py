@@ -21,3 +21,17 @@ class GrouponParserItem(scrapy.Item):
 	address = scrapy.Field()
 	location = scrapy.Field()
 	stars = scrapy.Field()
+
+class GrouponUrlRegionsParserItem(scrapy.Item):
+	# define the fields for your item here like:
+	timestamp = scrapy.Field()
+	url = scrapy.Field()
+	title = scrapy.Field()
+	price = scrapy.Field()
+	discount = scrapy.Field()
+	description = scrapy.Field()
+	options = scrapy.Field()
+	place = scrapy.Field()
+	address = scrapy.Field()
+	location = scrapy.Field()
+	stars = scrapy.Field()
