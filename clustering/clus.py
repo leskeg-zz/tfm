@@ -147,6 +147,11 @@ stars_grouped2 = frame['description'].groupby(frame['stars'])
 # ipdb.set_trace()
 # stars_grouped2.get_group(4).values
 
+#set up colors per clusters using a dict
+cluster_colors = {0: '#1b9e77', 1: '#d95f02', 2: '#7570b3', 3: '#e7298a', 4: '#66a61e'}
+
+#set up cluster names using a dict
+cluster_names = {}
 
 print("Top terms per cluster:")
 print()
@@ -167,10 +172,11 @@ for i in range(num_clusters):
         print(' %s.' % title, end='\n\r')
     print() #add whitespace
     print() #add whitespace
-    
-print()
-print()
 
+    cluster_names[i] = ', '.join([terms[ind] for ind in order_centroids[i, :5]])
+
+print()
+print()
 
 # convert two components as we're plotting points in a two-dimensional plane
 # "precomputed" because we provide a distance matrix
@@ -182,16 +188,6 @@ pos = mds.fit_transform(dist)  # shape (n_components, n_samples)
 xs, ys = pos[:, 0], pos[:, 1]
 print()
 print()
-
-#set up colors per clusters using a dict
-cluster_colors = {0: '#1b9e77', 1: '#d95f02', 2: '#7570b3', 3: '#e7298a', 4: '#66a61e'}
-
-#set up cluster names using a dict
-cluster_names = {0: 'Family, home, war', 
-                 1: 'Police, killed, murders', 
-                 2: 'Father, New York, brothers', 
-                 3: 'Dance, singing, love', 
-                 4: 'Killed, soldiers, captain'}
 
 
 

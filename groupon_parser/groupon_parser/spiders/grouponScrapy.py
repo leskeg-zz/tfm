@@ -22,9 +22,10 @@ class GrouponSpider(scrapy.Spider):
 		browser.get(response.url)
 		try:
 			browser.find_element_by_id("already-registered-link").click()
-			browser.find_element_by_xpath('//*[@id="search_getaways_widget"]/ul/li[1]/div[2]/a').click()
 		except:
-			pass
+			browser.find_element_by_xpath('//*[@id="continue"]').click()
+
+		browser.find_element_by_xpath('//*[@id="search_getaways_widget"]/ul/li[1]/div[2]/a').click()
 
 		while True:
 			try:
