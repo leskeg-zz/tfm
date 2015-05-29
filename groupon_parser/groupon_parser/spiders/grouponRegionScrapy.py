@@ -29,7 +29,6 @@ class GrouponSpider(scrapy.Spider):
 		browser.find_element_by_xpath('//*[@id="search_getaways_widget"]/ul/li[1]/div[2]/a').click()
 
 		region_list = browser.find_element_by_id('destination_filters').find_elements_by_tag_name('a')
-		del region_list[0:2]
 
 		for region in region_list[:]:
 			region.click()
@@ -46,3 +45,4 @@ class GrouponSpider(scrapy.Spider):
 				for element in browser.find_elements_by_tag_name("figure")]
 
 			yield item
+		browser.close()

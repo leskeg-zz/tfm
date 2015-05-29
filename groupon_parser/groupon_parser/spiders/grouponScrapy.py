@@ -54,7 +54,7 @@ class GrouponSpider(scrapy.Spider):
 		item['location'] = response.meta['location']
 
 		item_dict = {
-			'title': 		'//*[@id="global-container"]/div[4]/section[3]/div/div/section/div/hgroup/h1/text()',
+			'title': 		'//*[@id="global-container"]/div[4]/section[2]/div/div/section/div/hgroup/h1/text()',
 			'price': 		'//*[@id="deal-hero-price"]/span[2]/text()',
 			'discount': 	'//*[@id="purchase-cluster"]/div[3]/table/tbody/tr[2]/td[2]/text()',
 			'description':	'//*[@id="tabs-1"]/div/article[1]/div//text()',

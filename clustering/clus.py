@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
 from pymongo import MongoClient
 import codecs
 import ipdb
@@ -65,22 +64,22 @@ collection_result = db.result
 collection_region = db.region
 
 
-regions = {}
+# regions = {}
 
-for region in collection_region.find():
-  descriptions = []
-  for url in region['url_list']:
-    ad = collection_result.find_one({ 'url': url })
-    if ad:
-      descriptions.append(ad['description'])
-  regions[ region['region'] ] = descriptions
+# for region in collection_region.find():
+#   descriptions = []
+#   for url in region['url_list']:
+#     ad = collection_result.find_one({ 'url': url })
+#     if ad:
+#       descriptions.append(ad['description'])
+#   regions[ region['region'] ] = descriptions
 
-vectorizer = CountVectorizer(stop_words=stopwords, min_df=0.4, max_df=0.9)
-matrix = vectorizer.fit_transform(regions['Norte'])
-my_tuple = zip(vectorizer.get_feature_names(), np.asarray(matrix.sum(axis=0)).ravel())
-sorted(my_tuple, key=lambda my_tuple: my_tuple[1], reverse=True)
+# vectorizer = CountVectorizer(stop_words=stopwords, min_df=0.4, max_df=0.9)
+# matrix = vectorizer.fit_transform(regions['Norte'])
+# my_tuple = zip(vectorizer.get_feature_names(), np.asarray(matrix.sum(axis=0)).ravel())
+# sorted(my_tuple, key=lambda my_tuple: my_tuple[1], reverse=True)
 
-ipdb.set_trace()
+# ipdb.set_trace()
 
 # Getting interesting data
 titles = []
@@ -156,43 +155,26 @@ cluster_colors = {0: '#1b9e77', 1: '#d95f02', 2: '#7570b3', 3: '#e7298a', 4: '#6
 #set up cluster names using a dict
 cluster_names = {}
 
-print("Top terms per cluster:")
-print()
+print "Top terms per cluster:\n\r"
 #sort cluster centers by proximity to centroid
 order_centroids = km.cluster_centers_.argsort()[:, ::-1] 
 
 for i in range(num_clusters):
-    print("Cluster %d words:" % i, end='\n\r')
-    
-    for ind in order_centroids[i, :5]: #replace 5 with n words per cluster
-        # print(' %s' % vocab_frame.ix[terms[ind].split(' ')].values.tolist()[0][0].encode('utf-8', 'ignore'), end=',')
-        print(' %s' % terms[ind], end='')
-    print() #add whitespace
-    print() #add whitespace
-    
-    print("Cluster %d titles:" % i, end='\n\r')
+    cluster_names[i] = ', '.join([terms[ind] for ind in order_centroids[i, :8]])
+    print "\n\rCluster " + str(i) + " words: " + cluster_names[i]
+
+    print "Cluster " + str(i) + " titles:"
     for title in frame.ix[i]['title'].values.tolist():
-        print(' %s.' % title, end='\n\r')
-    print() #add whitespace
-    print() #add whitespace
+        print title
 
-    cluster_names[i] = ', '.join([terms[ind] for ind in order_centroids[i, :5]])
 
-print()
-print()
 
 # convert two components as we're plotting points in a two-dimensional plane
 # "precomputed" because we provide a distance matrix
 # we will also specify `random_state` so the plot is reproducible.
 mds = MDS(n_components=2, dissimilarity="precomputed", random_state=1)
-
 pos = mds.fit_transform(dist)  # shape (n_components, n_samples)
-
 xs, ys = pos[:, 0], pos[:, 1]
-print()
-print()
-
-
 
 #create data frame that has the result of the MDS plus the cluster numbers and titles
 df = pd.DataFrame(dict(x=xs, y=ys, label=clusters, title=titles)) 
