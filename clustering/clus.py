@@ -16,7 +16,6 @@ import mpld3
 import os  # for os.path.basename
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-import graph
 
 from sklearn.manifold import MDS
 
@@ -69,7 +68,22 @@ client = MongoClient()
 # Getting a Database
 db = client.tfm
 # Getting a Collection
-collection = db.result
+collection_result = db.result
+collection_region = db.region
+
+
+regions = {}
+
+for region in collection_region.find():
+  descriptions = []
+  for url in region['url_list']:
+    ad = collection_result.find_one({ 'url': url })
+    if ad:
+      descriptions.append(ad['description'])
+  regions[ region['region'] ] = descriptions
+
+ipdb.set_trace()
+
 
 # Getting interesting data
 titles = []
@@ -77,7 +91,7 @@ descriptions = []
 prices = []
 discounts = []
 stars = []
-for element in collection.find():
+for element in collection_result.find():
 	titles.append(element['title'])
 	descriptions.append(element['description'])
 	prices.append(element['price'])
@@ -240,7 +254,7 @@ for name, group in groups:
     
 ax.legend(numpoints=1) #show legend with only one dot
 
-mpld3.show() #show the plot
+# mpld3.show() #show the plot
 
 #uncomment the below to export to html
 #html = mpld3.fig_to_html(fig)
