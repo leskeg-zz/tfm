@@ -7,7 +7,7 @@ import nltk
 import tokenizers
 import numpy as np
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.cluster import KMeans
 from sklearn.externals import joblib
@@ -49,19 +49,12 @@ class TopToolbar(mpld3.plugins.PluginBase):
         self.dict_ = {"type": "toptoolbar"}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Load nltk's Spanish stopwords
+stopwords1 = nltk.corpus.stopwords.words('spanish')
+# Reading stopwords from file
+stopwords2 = codecs.open('stopwords.txt', encoding='utf-8').read().splitlines()
+# Merging stopwords excluding duplicates
+stopwords = list(set(stopwords1) | set(stopwords2))
 
 # Making a Connection with MongoClient
 client = MongoClient()
@@ -82,8 +75,12 @@ for region in collection_region.find():
       descriptions.append(ad['description'])
   regions[ region['region'] ] = descriptions
 
-ipdb.set_trace()
+vectorizer = CountVectorizer(stop_words=stopwords, min_df=0.4, max_df=0.9)
+matrix = vectorizer.fit_transform(regions['Norte'])
+my_tuple = zip(vectorizer.get_feature_names(), np.asarray(matrix.sum(axis=0)).ravel())
+sorted(my_tuple, key=lambda my_tuple: my_tuple[1], reverse=True)
 
+ipdb.set_trace()
 
 # Getting interesting data
 titles = []
@@ -99,14 +96,6 @@ for element in collection_result.find():
 	stars.append(element['stars'])
 
 # stars = list( collection.find( {}, { 'stars':1, '_id':0 } ))
-
-
-# Load nltk's Spanish stopwords
-stopwords1 = nltk.corpus.stopwords.words('spanish')
-# Reading stopwords from file
-stopwords2 = codecs.open('stopwords.txt', encoding='utf-8').read().splitlines()
-# Merging stopwords excluding duplicates
-stopwords = list(set(stopwords1) | set(stopwords2))
 
 #not super pythonic, no, not at all.
 #use extend so it's a big flat list of vocab
