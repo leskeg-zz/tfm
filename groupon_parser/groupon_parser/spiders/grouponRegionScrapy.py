@@ -33,16 +33,18 @@ class GrouponSpider(scrapy.Spider):
 		for region in region_list[:]:
 			region.click()
 
-			while True:
-				try:
-					browser.find_element_by_xpath('//*[@id="show_more_deals"]').click()
-				except:
-					break
+			try:
+				browser.find_element_by_id('noDealsResults')
+			except:
+				while True:
+					try:
+						browser.find_element_by_xpath('//*[@id="show_more_deals"]').click()
+					except:
+						break
 
-			item = GrouponRegionParserItem()
-			item['region'] = region.text
-			item['url_list'] = [element.find_element_by_tag_name('a').get_attribute('href') \
-				for element in browser.find_elements_by_tag_name("figure")]
+				item = GrouponRegionParserItem()
+				item['region'] = region.text
+				item['url_list'] = [element.find_element_by_tag_name('a').get_attribute('href') \
+					for element in browser.find_elements_by_tag_name("figure")]
 
-			yield item
-		browser.close()
+				yield item

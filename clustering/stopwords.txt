@@ -328,3 +328,6 @@ establecimiento
 san
 siglo
 visita
+ciudad
+groupon
+cuenta

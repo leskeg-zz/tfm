@@ -19,12 +19,12 @@ def tokenize_and_stem(text):
 
 def tokenize_only(text):
     # first tokenize by sentence, then by word to ensure that punctuation is caught as it's own token
-    tokens = [word.lower() for sent in nltk.sent_tokenize( ' '.join(re.findall(r'[\w]+', text, re.UNICODE)) ,language='spanish') for word in nltk.word_tokenize(sent,language='spanish')]
+    tokens = [word for sent in nltk.sent_tokenize( ' '.join(re.findall(r'[\w]+', text, re.UNICODE)) ,language='spanish') for word in nltk.word_tokenize(sent,language='spanish')]
     filtered_tokens = []
     # filter out any tokens not containing letters (e.g., numeric tokens, raw punctuation)
     for token in tokens:
-        if re.match('[a-zA-Z]', token):
-            filtered_tokens.append(token)
+        if re.match('[a-zA-Z]', token) and token[0].islower():
+            filtered_tokens.append(token.lower())
     return filtered_tokens
 
 # def wordFrequency(tokens, stopwords):

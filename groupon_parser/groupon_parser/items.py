@@ -20,6 +20,7 @@ class GrouponParserItem(scrapy.Item):
 	address = scrapy.Field()
 	location = scrapy.Field()
 	stars = scrapy.Field()
+	# destiny = scrapy.Field()
 
 class GrouponRegionParserItem(scrapy.Item):
 	url_list = scrapy.Field()
