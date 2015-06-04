@@ -6,7 +6,8 @@ cd groupon_parser
 scrapy genspider grouopn grouopn.es
 pip install selenium ipdb 
 scrapy crawl groupon
-scrapy crawl grouponScrapy -o result.json -t json
 nltk.download('stopwords')
 nltk.download('punkt')
+rm result.json; scrapy crawl grouponScrapy -o result.json -t json
 mongoimport --db tfm --collection result --type json --file result.json --jsonArray --upsertFields url
+rm region.json; scrapy crawl grouponRegionScrapy -o region.json -t json
