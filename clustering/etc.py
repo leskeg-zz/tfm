@@ -62,6 +62,9 @@ km = joblib.load('doc_cluster.pkl')
 clusters = km.labels_.tolist()
 
 
-
-
-
+found = collection_region.find_one({ 'region': region['region'] })
+	if found:
+		url_list = list(set(found['url_list']) | set(region['url_list']))
+		collection_region.update({'_id': found['_id']},{'$addToSet':{'url_list':{ '$each': region['url_list'] }}})
+	else:
+		collection_region.insert_one( region )

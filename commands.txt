@@ -11,3 +11,4 @@ nltk.download('punkt')
 rm result.json; scrapy crawl grouponScrapy -o result.json -t json
 mongoimport --db tfm --collection result --type json --file result.json --jsonArray --upsertFields url
 rm region.json; scrapy crawl grouponRegionScrapy -o region.json -t json
+python update_regions_db.py region.json

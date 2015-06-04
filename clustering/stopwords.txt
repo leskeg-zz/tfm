@@ -331,3 +331,6 @@ visita
 ciudad
 groupon
 cuenta
+minuto
+minutos
+situado

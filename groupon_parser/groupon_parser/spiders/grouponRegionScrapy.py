@@ -4,7 +4,7 @@ from selenium import webdriver
 from groupon_parser.items import GrouponRegionParserItem
 from datetime import datetime
 from dateutil import tz
-import ipdb
+from ipdb import set_trace
 import re
 
 class GrouponSpider(scrapy.Spider):
@@ -39,6 +39,7 @@ class GrouponSpider(scrapy.Spider):
 				while True:
 					try:
 						browser.find_element_by_xpath('//*[@id="show_more_deals"]').click()
+						sleep(2)
 					except:
 						break
 
