@@ -9,4 +9,4 @@ scrapy crawl groupon
 scrapy crawl grouponScrapy -o result.json -t json
 nltk.download('stopwords')
 nltk.download('punkt')
-mongoimport --db tfm --collection result --type json --file result.json --jsonArray
+mongoimport --db tfm --collection result --type json --file result.json --jsonArray --upsertFields url
