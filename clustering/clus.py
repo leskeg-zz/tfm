@@ -29,7 +29,6 @@ tfidf_matrix = tfidf_vectorizer.fit_transform(result['description'])
 # print(tfidf_matrix.shape)
 
 terms = tfidf_vectorizer.get_feature_names()
-dist = 1 - cosine_similarity(tfidf_matrix)
 
 num_clusters = 5
 km = KMeans(n_clusters=num_clusters)
@@ -110,6 +109,7 @@ cluster_colors = {0: '#1b9e77', 1: '#d95f02', 2: '#7570b3', 3: '#e7298a', 4: '#6
 # "precomputed" because we provide a distance matrix
 # we will also specify `random_state` so the plot is reproducible.
 mds = MDS(n_components=2, dissimilarity="precomputed", random_state=1)
+dist = 1 - cosine_similarity(tfidf_matrix)
 pos = mds.fit_transform(dist)  # shape (n_components, n_samples)
 xs, ys = pos[:, 0], pos[:, 1]
 
