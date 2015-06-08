@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import nltk
 import re
-import ipdb
+from ipdb import set_trace
 # Load nltk's SnowballStemmer
 stemmer = nltk.stem.snowball.SnowballStemmer("spanish")
-
+# tagger = nltk.tag.DefaultTagger("spanish")
 # here I define a tokenizer and stemmer which returns the set of stems in the text that it is passed
 def tokenize_and_stem(text):
     # first tokenize by sentence, then by word to ensure that punctuation is caught as it's own token
@@ -23,9 +23,15 @@ def tokenize_only(text):
     filtered_tokens = []
     # filter out any tokens not containing letters (e.g., numeric tokens, raw punctuation)
     for token in tokens:
-        if re.match('[a-zA-Z]', token) and token[0].islower():
+        if re.match('[a-zA-Z]', token):
             filtered_tokens.append(token.lower())
     return filtered_tokens
+
+#strip any proper nouns (NNP) or plural proper nouns (NNPS) from a text
+# def strip_proppers_POS(text):
+#     tagged = nltk.tag.pos_tag(text.split()) #use NLTK's part of speech tagger
+#     non_propernouns = [word for word,pos in tagged if pos != 'NNP' and pos != 'NNPS']
+#     return non_propernouns
 
 # def wordFrequency(tokens, stopwords):
 #     dictFreq = {}

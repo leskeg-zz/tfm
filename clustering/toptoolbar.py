@@ -47,7 +47,7 @@ margin-left: -100px;}
 #note that I use the cluster_name and cluster_color dicts with the 'name' lookup to return the appropriate color/label
 def plot(groups,fig,ax,cluster_names,cluster_colors):
 	for name, group in groups:
-	    points = ax.plot(group.x, group.y, marker='o', linestyle='', ms=18, 
+	    points = ax.plot(group.x, group.y, marker='o', linestyle='', ms=10, 
 	                     label=cluster_names[name], mec='none', 
 	                     color=cluster_colors[name])
 	    ax.set_aspect('auto')
@@ -55,7 +55,7 @@ def plot(groups,fig,ax,cluster_names,cluster_colors):
 	    
 	    #set tooltip using points, labels and the already defined 'css'
 	    tooltip = mpld3.plugins.PointHTMLTooltip(points[0], labels,
-	                                       voffset=10, hoffset=10, css=css)
+	                                       voffset=5, hoffset=5, css=css)
 	    #connect tooltip to fig
 	    mpld3.plugins.connect(fig, tooltip, TopToolbar())    
 	    

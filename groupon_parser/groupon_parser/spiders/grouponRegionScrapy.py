@@ -39,8 +39,8 @@ class GrouponSpider(scrapy.Spider):
 			except:
 				while True:
 					try:
+						time.sleep(2)
 						browser.find_element_by_xpath('//*[@id="show_more_deals"]').click()
-						time.sleep(4)
 					except:
 						break
 

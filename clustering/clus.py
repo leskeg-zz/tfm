@@ -30,7 +30,7 @@ tfidf_matrix = tfidf_vectorizer.fit_transform(result['description'])
 
 terms = tfidf_vectorizer.get_feature_names()
 
-num_clusters = 5
+num_clusters = 4
 km = KMeans(n_clusters=num_clusters)
 km.fit(tfidf_matrix)
 clusters = km.labels_.tolist()
@@ -79,8 +79,8 @@ discount_stars_grouped = frame['discount'].groupby(frame['stars'])
 print 'Average discount per stars:'
 print(discount_stars_grouped.mean())
 
-
-vectorizer = CountVectorizer(stop_words=stopwords, tokenizer=tokenize_only, min_df=0.4)
+vectorizer = TfidfVectorizer(stop_words=stopwords, use_idf=True, tokenizer=tokenize_only, min_df=0.3)
+# vectorizer = CountVectorizer(stop_words=stopwords, tokenizer=tokenize_only, min_df=0.4)
 description_stars_grouped = frame['description'].groupby(frame['stars'])
 print 'Top terms per stars:'
 for i in range(1,6):
@@ -120,6 +120,6 @@ df = pd.DataFrame(dict(x=xs, y=ys, label=clusters, title=result['title']))
 groups = df.groupby('label')
 
 # Plot 
-fig, ax = plt.subplots(figsize=(15,8)) #set plot size
-ax.margins(0.2) # Optional, just adds 5% padding to the autoscaling
-plot(groups,fig,ax,cluster_names,cluster_colors)
+fig, ax = plt.subplots(figsize=(16,9)) #set plot size
+ax.margins(0.2) # Optional, just adds 2% padding to the autoscaling
+# plot(groups,fig,ax,cluster_names,cluster_colors)
