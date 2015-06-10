@@ -72,4 +72,4 @@ def plot(groups,fig,ax,cluster_names,cluster_colors):
 	file_ = open('clustering.html', 'w')
 	file_.write(mpld3.fig_to_html(fig))
 	file_.close()
-	mpld3.show() #show the plot
+	# mpld3.show() #show the plot

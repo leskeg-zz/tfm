@@ -2,7 +2,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 from ipdb import set_trace
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -133,4 +132,4 @@ groups = df.groupby('label')
 # Plot 
 fig, ax = plt.subplots(figsize=(16,9)) #set plot size
 ax.margins(0.2) # Optional, just adds 2% padding to the autoscaling
-# plot(groups,fig,ax,cluster_names,cluster_colors)
+plot(groups,fig,ax,cluster_names,cluster_colors)
