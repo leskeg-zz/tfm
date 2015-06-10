@@ -64,38 +64,49 @@ Aggregation
 '''
 
 price_grouped = frame['price'].groupby(frame['cluster']) #groupby cluster for aggregation purposes
-print 'Average price per cluster:'
+print '\nAverage price per cluster:'
 print(price_grouped.mean()) 
 
 discount_grouped = frame['discount'].groupby(frame['cluster'])
-print 'Average discount per cluster:'
+print '\nAverage discount per cluster:'
 print(discount_grouped.mean())
 
 price_stars_grouped = frame['price'].groupby(frame['stars'])
-print 'Average price per stars:'
+print '\nNumber of advertisements per stars:'
+print(price_stars_grouped.count())
+print '\nAverage price per stars:'
 print(price_stars_grouped.mean())
+print '\nMinimum price per stars:'
+print(price_stars_grouped.min())
+print '\nMaximum price per stars:'
+print(price_stars_grouped.max())
 
 discount_stars_grouped = frame['discount'].groupby(frame['stars'])
-print 'Average discount per stars:'
+print '\nAverage discount per stars:'
 print(discount_stars_grouped.mean())
+print '\nMinimum discount per stars:'
+print(discount_stars_grouped.min())
+print '\nMaximum discount per stars:'
+print(discount_stars_grouped.max())
 
 vectorizer = TfidfVectorizer(stop_words=stopwords, use_idf=True, tokenizer=tokenize_only, min_df=0.3)
 # vectorizer = CountVectorizer(stop_words=stopwords, tokenizer=tokenize_only, min_df=0.4)
 description_stars_grouped = frame['description'].groupby(frame['stars'])
-print 'Top terms per stars:'
+print '\nTop terms per stars:'
 for i in range(1,6):
   matrix = vectorizer.fit_transform(description_stars_grouped.get_group(i).values)
   frequency_top_terms = zip(vectorizer.get_feature_names(), np.asarray(matrix.sum(axis=0)).ravel())
-  print str(i) + ' stars: '
-  print sorted(frequency_top_terms, key=lambda frequency_top_terms: frequency_top_terms[1], reverse=True)[:8]
+  elements = sorted(frequency_top_terms, key=lambda frequency_top_terms: frequency_top_terms[1], reverse=True)[:8]
+  print str(i) + ' stars: ' + '%s' % ', '.join([element[0] for element in elements])
 
-print 'Top terms per regions:'
+print '\nTop terms per regions:'
 for region_name in regions:
   if len(regions[ region_name ]):
     matrix = vectorizer.fit_transform(regions[ region_name ])
     frequency_top_terms = zip(vectorizer.get_feature_names(), np.asarray(matrix.sum(axis=0)).ravel())
-    print region_name + ': '
-    print sorted(frequency_top_terms, key=lambda frequency_top_terms: frequency_top_terms[1], reverse=True)[:8]
+    elements = sorted(frequency_top_terms, key=lambda frequency_top_terms: frequency_top_terms[1], reverse=True)[:8]
+    print region_name + ': ' + '%s' % ', '.join([element[0] for element in elements])
+
 '''
 ********************************************************************
 Graphical Representation
