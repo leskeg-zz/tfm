@@ -29,7 +29,7 @@ tfidf_matrix = tfidf_vectorizer.fit_transform(result['description'])
 
 terms = tfidf_vectorizer.get_feature_names()
 
-num_clusters = 4
+num_clusters = 5
 km = KMeans(n_clusters=num_clusters)
 km.fit(tfidf_matrix)
 clusters = km.labels_.tolist()
