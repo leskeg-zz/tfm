@@ -20,7 +20,7 @@ Dependencies:
 Setup:
 - virtualenv -p /usr/bin/python2.7 env
 - source env/bin/activate
-- pip install -e req.txt
+- pip install -r req.txt
 - In python console: import nltk; nltk.download('stopwords'); nltk.download('punkt')
 
 Deployment:
