@@ -12,7 +12,8 @@ Dependencies:
 - python-virtualenv
 - mongodb 
 - mongodb-tools 
-- robomongo lapack 
+- robomongo
+- lapack 
 - blas 
 - gcc-fortran
 
