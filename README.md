@@ -9,17 +9,18 @@ Description:
 This project extract data from a turistic webpage using Scrapy. Output are 2 files: 'result.json' and 'region.json'. Then files are imported to MongoDB database called 'tfm'. Finally different gramatical analysis and clustering are made.
 
 Dependencies:
-python-virtualenv mongodb mongodb-tools robomongo lapack blas gcc-fortran
+- python-virtualenv
+- mongodb 
+- mongodb-tools 
+- robomongo lapack 
+- blas 
+- gcc-fortran
 
 Setup:
-virtualenv -p /usr/bin/python2.7 env
-source env/bin/activate
-pip install -e req.txt
-
-Run command: python
-import nltk
-nltk.download('stopwords')
-nltk.download('punkt')
+- virtualenv -p /usr/bin/python2.7 env
+- source env/bin/activate
+- pip install -e req.txt
+- In python console: import nltk; nltk.download('stopwords'); nltk.download('punkt')
 
 Deployment:
 cd groupon_parser
@@ -31,5 +32,7 @@ mongoimport --db tfm --collection result --type json --file result.json --jsonAr
 python update_regions_db.py
 
 Analysis:
-cd ../clustering/
-python clus.py
+- cd ../clustering/
+- python clus.py
+
+Results are showed in console and clustering.html is created.
