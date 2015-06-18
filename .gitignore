@@ -1,2 +1,4 @@
 /env/
 *.pyc
+result.json
+region.json
