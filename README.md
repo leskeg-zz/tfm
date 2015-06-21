@@ -27,15 +27,17 @@ Deployment:
 
 cd groupon_parser
 
-nrm result.json; scrapy crawl grouponScrapy -o result.json -t json
+rm result.json; scrapy crawl grouponScrapy -o result.json -t json
 
 rm region.json; scrapy crawl grouponRegionScrapy -o region.json -t json
+
 
 Import Result to db:
 
 mongoimport --db tfm --collection result --type json --file result.json --jsonArray --upsertFields url
 
 python update_regions_db.py result.json
+
 
 Analysis:
 - cd ../clustering/
