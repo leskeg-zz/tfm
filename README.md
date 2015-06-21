@@ -24,13 +24,18 @@ Setup:
 - In python console: import nltk; nltk.download('stopwords'); nltk.download('punkt')
 
 Deployment:
-\r\ncd groupon_parser
-\r\nrm result.json; scrapy crawl grouponScrapy -o result.json -t json
-\r\nrm region.json; scrapy crawl grouponRegionScrapy -o region.json -t json
+
+cd groupon_parser
+
+nrm result.json; scrapy crawl grouponScrapy -o result.json -t json
+
+rm region.json; scrapy crawl grouponRegionScrapy -o region.json -t json
 
 Import Result to db:
-\r\nmongoimport --db tfm --collection result --type json --file result.json --jsonArray --upsertFields url
-\r\npython update_regions_db.py result.json
+
+mongoimport --db tfm --collection result --type json --file result.json --jsonArray --upsertFields url
+
+python update_regions_db.py result.json
 
 Analysis:
 - cd ../clustering/
