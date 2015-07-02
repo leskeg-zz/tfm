@@ -38,7 +38,7 @@ result['cluster'] = clusters
 frame = pd.DataFrame(result, index = [clusters] , columns = [ 'title', 'description', 'price', 'discount', 'stars', 'cluster'])
 
 
-'''frame[frame['description'].str.contains(u'romantic')]'''
+# frame[frame['description'].str.contains(u'romantic')]
 
 
 #number of ads per cluster (clusters from 0 to 4)
