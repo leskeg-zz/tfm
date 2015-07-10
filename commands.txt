@@ -1,4 +1,4 @@
-yaourt -S python-virtualenv mongodb mongodb-tools robomongo lapack blas gcc-fortran
+yaourt -S python-virtualenv lapack blas gcc-fortran mongodb mongodb-tools robomongo-git
 virtualenv -p /usr/bin/python2.7 env
 source env/bin/activate
 pip install service_identity scrapy selenium ipdb datetime python-dateutil scikit-learn numpy scipy pandas nltk pymongo
