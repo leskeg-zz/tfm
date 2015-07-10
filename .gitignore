@@ -1,4 +1,8 @@
 /env/
+/docs/etc/
+/docs/img/
+/docs/papers/
 *.pyc
 result.json
 region.json
+clustering.html
