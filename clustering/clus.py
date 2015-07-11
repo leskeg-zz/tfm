@@ -96,7 +96,7 @@ vectorizer = TfidfVectorizer(stop_words=stopwords, use_idf=True, tokenizer=token
 # vectorizer = CountVectorizer(stop_words=stopwords, tokenizer=tokenize_only, min_df=0.4)
 description_stars_grouped = frame['description'].groupby(frame['stars'])
 print '\nTop terms per stars:'
-for i in range(1,6):
+for i in discount_stars_grouped.groups.keys():
   matrix = vectorizer.fit_transform(description_stars_grouped.get_group(i).values)
   frequency_top_terms = zip(vectorizer.get_feature_names(), np.asarray(matrix.sum(axis=0)).ravel())
   elements = sorted(frequency_top_terms, key=lambda frequency_top_terms: frequency_top_terms[1], reverse=True)[:8]
