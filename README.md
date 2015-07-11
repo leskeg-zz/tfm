@@ -1,12 +1,16 @@
 # IT Master Thesis
 
+Project name: 
+"Web Crawling and data analysis with Python"
+
+Description:
+This project extract data from a turistic webpage using Scrapy. Output are 2 files: 'result.json' and 'region.json'. Then files are imported to MongoDB database called 'tfm'. Finally different gramatical analysis and clustering are made.
+
+
 Technologies:
 - Scrapy Framework
 - MongoDB
 - Scikit-Learn
-
-Description:
-This project extract data from a turistic webpage using Scrapy. Output are 2 files: 'result.json' and 'region.json'. Then files are imported to MongoDB database called 'tfm'. Finally different gramatical analysis and clustering are made.
 
 Dependencies:
 - python-virtualenv
